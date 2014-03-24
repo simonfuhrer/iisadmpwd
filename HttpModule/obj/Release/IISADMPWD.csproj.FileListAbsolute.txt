@@ -1,0 +1,6 @@
+C:\Users\Simon\Downloads\iisadmpwdhttpmodule\HttpModule\HttpModule\obj\Release\Interop.ActiveDs.dll
+C:\Users\Simon\Downloads\iisadmpwdhttpmodule\HttpModule\HttpModule\obj\Release\IISADMPWD.csproj.ResolveComReference.cache
+C:\Users\Simon\Downloads\iisadmpwdhttpmodule\HttpModule\HttpModule\bin\Release\IISADMPWD.dll
+C:\Users\Simon\Downloads\iisadmpwdhttpmodule\HttpModule\HttpModule\bin\Release\IISADMPWD.pdb
+C:\Users\Simon\Downloads\iisadmpwdhttpmodule\HttpModule\HttpModule\obj\Release\IISADMPWD.dll
+C:\Users\Simon\Downloads\iisadmpwdhttpmodule\HttpModule\HttpModule\obj\Release\IISADMPWD.pdb

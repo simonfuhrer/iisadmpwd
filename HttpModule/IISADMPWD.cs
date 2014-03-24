@@ -12,7 +12,7 @@ using System.Threading;
 using System.Net.NetworkInformation;
 using System.DirectoryServices;
 
-namespace HttpModule
+namespace IISADMPWD
 {
     public class IISADMPWDHttpModule : IHttpModule
     {

@@ -8,7 +8,7 @@ using System.Security.Principal;
 using ActiveDs;
 using System.IO;
 using System.Threading;
-namespace HttpModule
+namespace IISADMPWD
 {
     public class ActiveDirectoryUser
     {

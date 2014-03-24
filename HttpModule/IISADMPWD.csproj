@@ -8,8 +8,8 @@
     <ProjectGuid>{3194BA8F-6728-492B-A971-FE99ADF95CFC}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>HttpModule</RootNamespace>
-    <AssemblyName>HttpModule</AssemblyName>
+    <RootNamespace>IISADMPWD</RootNamespace>
+    <AssemblyName>IISADMPWD</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SccProjectName>SAK</SccProjectName>
@@ -52,7 +52,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ActiveDirectoryUser.cs" />
-    <Compile Include="HttpModule.cs" />
+    <Compile Include="IISADMPWD.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
