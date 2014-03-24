@@ -11,7 +11,7 @@ using System.Security.Principal;
 using System.Threading;
 using System.Net.NetworkInformation;
 using System.DirectoryServices;
-
+using ActiveDs;
 
 namespace HttpModule
 {
@@ -167,18 +167,12 @@ namespace HttpModule
                     Logging("username=" + userid2);
 
                     Logging("Starting Directory Mgmt Class");
-                   
-                    string plainuser = PlainUserName(userid2);
-                    Logging("PlainUsername: " + plainuser);
 
-                    ActiveDirectoryUser ADclsuser = new ActiveDirectoryUser();
-                    ADclsuser.m_AD_techuser = TechUser;
-                    ADclsuser.m_AD_techuserpw = Techpwd;
-                             
+                    ActiveDirectoryUser ADclsuser = new ActiveDirectoryUser(userid2,domain);
+                    Logging("Constructed UPN: " + ADclsuser.constructedupn);  
 
-                    if (ADclsuser.AccountExists(plainuser))
+                    if (ADclsuser.AccountExists())
                     {
-                        ADclsuser.ADUser(plainuser);
                         checkpassworddoesnotexpire = ADclsuser.PasswordDoesNotExpire();
                         checkpwdmustchange = ADclsuser.PasswordChangeRequired();
                         checkpwdexpired = ADclsuser.PasswordExpired();
@@ -191,7 +185,7 @@ namespace HttpModule
                     }
                     else
                     {
-                        Logging("User " + plainuser + " dont exist");
+                        Logging("User " + userid2 + " does not exist");
                         return;
                     }
 
@@ -258,8 +252,6 @@ namespace HttpModule
 
             IPGlobalProperties ipp = IPGlobalProperties.GetIPGlobalProperties();
             string Tracing = ConfigurationManager.AppSettings["Tracing"].ToLower();
-            TechUser = ConfigurationManager.AppSettings["TechUserAD"].ToLower();
-            Techpwd = ConfigurationManager.AppSettings["TechpwdAD"];
             string pwdmustchangeretcode_str = ConfigurationManager.AppSettings["PwdMustChangeRetCode"].ToLower();
             pwdmustchangeretcode = int.Parse(pwdmustchangeretcode_str);
             DoLogging = bool.Parse(Tracing);
@@ -268,23 +260,8 @@ namespace HttpModule
         }
 
 
-        private static string PlainUserName(string username)
-        {
-            if (username.Contains(@"\"))
-            {
-                int index = username.IndexOf(@"\");
-                return username.Substring(index + 1, username.Length - index - 1);
-            }
-            else if (username.Contains("@"))
-            {
-                int index = username.IndexOf("@");
-                return username.Substring(0, index);
-            }
-            else
-            {
-                return username;
-            }
-        }
+
+
 
         private void Logging(string Message)
         {

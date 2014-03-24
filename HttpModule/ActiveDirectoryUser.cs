@@ -14,11 +14,11 @@ namespace HttpModule
         #region Private Variables
         private DirectoryEntry user;
         private string baseDN;
+        private string configDN;
+        public string constructedupn;
         #endregion
 
         #region Getter/Setter
-        public string m_AD_techuser { get; set; }
-        public string m_AD_techuserpw { get; set; }
         #endregion
 
         #region Enumerations
@@ -52,35 +52,68 @@ namespace HttpModule
         #endregion
 
         #region Constructors
-    
-        public ActiveDirectoryUser()
+
+        private string ConverttoUPN(string username, string domain)
+        {
+            string convertedusername;
+            string converteddomainname;
+            if (username.Contains(@"\"))
+            {
+                int index = username.IndexOf(@"\");
+                convertedusername = username.Substring(index + 1, username.Length - index - 1);
+                converteddomainname = username.Substring(0, index);
+                if (!converteddomainname.Contains("."))
+                {
+                    converteddomainname = GetDNSDomaiNamefromNetbios(converteddomainname);
+
+                }
+
+            }
+            else if (username.Contains("@"))
+            {
+                int index = username.IndexOf("@");
+                convertedusername = username.Substring(0, index);
+                converteddomainname = username.Substring(index + 1);
+            }
+            else
+            {
+                convertedusername = username;
+                converteddomainname = domain;
+            }
+            return convertedusername + "@" + converteddomainname;
+        }
+
+
+        public ActiveDirectoryUser(string username,string domain)
 		{
 			//
 			// TODO: Add constructor logic here
 			//
-            DirectoryEntry rootdse = new DirectoryEntry("LDAP://RootDSE", m_AD_techuser, m_AD_techuserpw);
-            baseDN = rootdse.Properties["defaultnamingcontext"][0].ToString();
-
-		}        
-        #endregion
-
-        #region Methods
-
-        public void ADUser(string userName)
-        {
+            DirectoryEntry rootdse = new DirectoryEntry("GC://RootDSE");
+            baseDN = rootdse.Properties["rootDomainNamingContext"].Value.ToString();
+            configDN = rootdse.Properties["configurationNamingContext"].Value.ToString() ;
+            constructedupn = ConverttoUPN(username, domain);
             try
             {
 
-                user = new DirectoryEntry("LDAP://" + baseDN, m_AD_techuser, m_AD_techuserpw);
-                DirectorySearcher searcher = new DirectorySearcher(user);
+                DirectoryEntry domaindn = new DirectoryEntry("GC://" + baseDN);
+                DirectorySearcher searcher = new DirectorySearcher(domaindn);
 
-                searcher.Filter = "(&(objectCategory=person)(objectClass=user)(sAMAccountName=" + userName + "))";
+                string filter = String.Format("(&(objectCategory=person)(objectClass=user)(userPrincipalName={0}))", constructedupn);
+                searcher.Filter = filter;
                 searcher.CacheResults = false;
 
                 // Find user
 
                 SearchResult result = searcher.FindOne();
-                user = result.GetDirectoryEntry();
+                if (result != null)
+                {
+                    user = result.GetDirectoryEntry();
+                }
+                else
+                {
+                    // Logging
+                }
 
             }
             catch (Exception ex)
@@ -88,26 +121,37 @@ namespace HttpModule
                 //throw new Exception("Error" + ex.Message);
 
             }
+		}        
+        #endregion
+
+        #region Methods
+
+        public string GetDNSDomaiNamefromNetbios(string netbios)
+        {
+            string netbiosName = netbios;
+            // Search for an object that is of type crossRefContainer.
+            DirectorySearcher searcher = new DirectorySearcher(configDN);
+            searcher.Filter = string.Format("(&(objectcategory=Crossref)(netBIOSName={0}))", netbios);
+            searcher.PropertiesToLoad.Add("dnsRoot");
+
+            SearchResultCollection results = searcher.FindAll();
+            if (results.Count > 0)
+            {
+                ResultPropertyValueCollection rpvc = results[0].Properties["dnsRoot"];
+                
+                netbiosName = rpvc[0].ToString();
+            }
+            return netbiosName;
         }
 
 
-        public bool AccountExists(string name)
+
+        public bool AccountExists()
         {
-            bool bRet = false;
-
-            try
-            {
-                NTAccount acct = new NTAccount(name);
-                SecurityIdentifier id = (SecurityIdentifier)acct.Translate(typeof(SecurityIdentifier));
-
-                bRet = id.IsAccountSid();
+            if (user != null){
+                return true;
             }
-            catch (IdentityNotMappedException)
-            {
-                /* Invalid user account */
-            }
-
-            return bRet;
+            return false;
         }
 
 
