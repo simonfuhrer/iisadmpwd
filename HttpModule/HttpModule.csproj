@@ -56,6 +56,11 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Sample Configurations\Classic .Net\web.config" />
+    <None Include="Sample Configurations\Integrated Pipeline\web.config" />
+    <None Include="tecbiz.snk" />
+  </ItemGroup>
+  <ItemGroup>
     <COMReference Include="ActiveDs">
       <Guid>{97D25DB0-0363-11CF-ABC4-02608C9E7553}</Guid>
       <VersionMajor>1</VersionMajor>
@@ -66,12 +71,6 @@
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </COMReference>
   </ItemGroup>
-  <ItemGroup>
-    <None Include="Sample Configurations\Classic .Net\web.config" />
-    <None Include="Sample Configurations\Integrated Pipeline\web.config" />
-    <None Include="tecbiz.snk" />
-  </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
     <Content Include="Documentation\readme.txt" />
   </ItemGroup>

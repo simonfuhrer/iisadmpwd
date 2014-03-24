@@ -4,9 +4,10 @@ using System.Text;
 using System.DirectoryServices;
 using System.DirectoryServices.ActiveDirectory;
 using System.Collections;
-using ActiveDs;
 using System.Security.Principal;
-
+using ActiveDs;
+using System.IO;
+using System.Threading;
 namespace HttpModule
 {
     public class ActiveDirectoryUser
@@ -79,9 +80,15 @@ namespace HttpModule
             {
                 convertedusername = username;
                 converteddomainname = domain;
+                if (!converteddomainname.Contains("."))
+                {
+                    converteddomainname = GetDNSDomaiNamefromNetbios(converteddomainname);
+
+                }
             }
             return convertedusername + "@" + converteddomainname;
         }
+
 
 
         public ActiveDirectoryUser(string username,string domain)
@@ -102,22 +109,25 @@ namespace HttpModule
                 string filter = String.Format("(&(objectCategory=person)(objectClass=user)(userPrincipalName={0}))", constructedupn);
                 searcher.Filter = filter;
                 searcher.CacheResults = false;
+                searcher.SearchScope = SearchScope.Subtree;
 
                 // Find user
 
                 SearchResult result = searcher.FindOne();
                 if (result != null)
                 {
-                    user = result.GetDirectoryEntry();
+                    string newpath = result.GetDirectoryEntry().Path.Replace("GC","LDAP");
+                    user = new DirectoryEntry(newpath);
                 }
                 else
                 {
-                    // Logging
+        
                 }
 
             }
             catch (Exception ex)
             {
+                
                 //throw new Exception("Error" + ex.Message);
 
             }
@@ -126,11 +136,13 @@ namespace HttpModule
 
         #region Methods
 
+
         public string GetDNSDomaiNamefromNetbios(string netbios)
         {
             string netbiosName = netbios;
             // Search for an object that is of type crossRefContainer.
-            DirectorySearcher searcher = new DirectorySearcher(configDN);
+            DirectoryEntry configde = new DirectoryEntry("LDAP://" + configDN);
+            DirectorySearcher searcher = new DirectorySearcher(configde);
             searcher.Filter = string.Format("(&(objectcategory=Crossref)(netBIOSName={0}))", netbios);
             searcher.PropertiesToLoad.Add("dnsRoot");
 

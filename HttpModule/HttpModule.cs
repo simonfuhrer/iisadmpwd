@@ -11,7 +11,6 @@ using System.Security.Principal;
 using System.Threading;
 using System.Net.NetworkInformation;
 using System.DirectoryServices;
-using ActiveDs;
 
 namespace HttpModule
 {
@@ -185,7 +184,7 @@ namespace HttpModule
                     }
                     else
                     {
-                        Logging("User " + userid2 + " does not exist");
+                        Logging("User " + ADclsuser.constructedupn + " does not exist");
                         return;
                     }
 
@@ -252,8 +251,8 @@ namespace HttpModule
 
             IPGlobalProperties ipp = IPGlobalProperties.GetIPGlobalProperties();
             string Tracing = ConfigurationManager.AppSettings["Tracing"].ToLower();
-            string pwdmustchangeretcode_str = ConfigurationManager.AppSettings["PwdMustChangeRetCode"].ToLower();
-            pwdmustchangeretcode = int.Parse(pwdmustchangeretcode_str);
+            
+            pwdmustchangeretcode = int.Parse(ConfigurationManager.AppSettings["statusCode"]);
             DoLogging = bool.Parse(Tracing);
             LogFile = ConfigurationManager.AppSettings["LogFile"];
 
