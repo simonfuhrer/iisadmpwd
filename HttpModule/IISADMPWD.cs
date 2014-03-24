@@ -11,6 +11,7 @@ using System.Security.Principal;
 using System.Threading;
 using System.Net.NetworkInformation;
 using System.DirectoryServices;
+using System.ServiceModel.Security;
 
 namespace IISADMPWD
 {
@@ -19,10 +20,8 @@ namespace IISADMPWD
         #region Private Properties
         private HttpApplication app;
         private bool DoLogging = false;
-        private int pwdmustchangeretcode = 306;
         private string LogFile;
-        private string TechUser;
-        private string Techpwd;
+        private int statusCode = 999;
         private bool checkpwdmustchange = false;
         private bool checkpwdexpired = false;
         private bool checkpwdlokedout = false;
@@ -125,7 +124,7 @@ namespace IISADMPWD
             }
 
             string authorization = app.Request.Headers["Authorization"];
-
+            Logging("header: " + authorization );
             #region base64 converter etc
             if ((authorization == null) || (authorization.Length == 0))
             {
@@ -133,10 +132,21 @@ namespace IISADMPWD
                 return;
             }
 
-            if (authorization.StartsWith("NTLM"))
+            if (authorization.StartsWith("NTLM") || authorization.StartsWith("Negotiate"))
             {
-                Logging("BeginRequest: Headers Start with NTLM");
-                byte[] msg = Convert.FromBase64String(authorization.Substring(5));
+                int substringheader;
+                if (authorization.StartsWith("Negotiate"))
+                {
+                    substringheader = 10;
+                    Logging("BeginRequest: Headers Start with Negotiate");
+                }else
+                {
+                    substringheader = 5;
+                    Logging("BeginRequest: Headers Start with NTLM");
+                }
+
+
+                byte[] msg = Convert.FromBase64String(authorization.Substring(substringheader));
                 int off = 0, length, offset;
 
                 if (msg[8] == 1)
@@ -248,11 +258,9 @@ namespace IISADMPWD
             checkpwdexpired = false;
             checkpwdlokedout = false;
             checkuseraccountstatus = false;
-
-            IPGlobalProperties ipp = IPGlobalProperties.GetIPGlobalProperties();
             string Tracing = ConfigurationManager.AppSettings["Tracing"].ToLower();
             
-            pwdmustchangeretcode = int.Parse(ConfigurationManager.AppSettings["statusCode"]);
+            statusCode = int.Parse(ConfigurationManager.AppSettings["statusCode"]);
             DoLogging = bool.Parse(Tracing);
             LogFile = ConfigurationManager.AppSettings["LogFile"];
 
@@ -283,25 +291,25 @@ namespace IISADMPWD
         
         private void ResponseStatus(HttpApplication app, int iResponseSubStatus, string sResponseDescription)
         {
-            Logging("Set ResponseStatus: " + pwdmustchangeretcode + "." + iResponseSubStatus);
-            app.Response.StatusCode = pwdmustchangeretcode;
+            Logging("Set ResponseStatus: " + statusCode + "." + iResponseSubStatus);
+            app.Response.StatusCode = statusCode;
             app.Response.SubStatusCode = iResponseSubStatus;
             // write to browser
-            app.Response.Write("Status Code " + pwdmustchangeretcode + "." + iResponseSubStatus + ": " + sResponseDescription);
+            app.Response.Write("Status Code " + statusCode + "." + iResponseSubStatus + ": " + sResponseDescription);
             app.CompleteRequest();
         }
 
 
-        private void AccessDenied(HttpApplication app)
-        {
-            //TEST
-            app.Response.StatusCode = 401;
-            app.Response.StatusDescription = "Access Denied";
+        //private void AccessDenied(HttpApplication app)
+        //{
+        //    //TEST
+        //    app.Response.StatusCode = 401;
+        //    app.Response.StatusDescription = "Access Denied";
 
-            // write to browser
-            app.Response.Write("401 Access Denied");
-            app.CompleteRequest();
-        }
+        //    // write to browser
+        //    app.Response.Write("401 Access Denied");
+        //    app.CompleteRequest();
+        //}
 
         #endregion
     }
