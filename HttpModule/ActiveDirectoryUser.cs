@@ -16,6 +16,7 @@ namespace IISADMPWD
         private DirectoryEntry user;
         private string baseDN;
         private string configDN;
+        private int notifydays;
         public string constructedupn;
         #endregion
 
@@ -91,12 +92,13 @@ namespace IISADMPWD
 
 
 
-        public ActiveDirectoryUser(string username,string domain)
+        public ActiveDirectoryUser(string username,string domain,int notifydays)
 		{
 			//
 			// TODO: Add constructor logic here
 			//
             DirectoryEntry rootdse = new DirectoryEntry("GC://RootDSE");
+            this.notifydays = notifydays;
             baseDN = rootdse.Properties["rootDomainNamingContext"].Value.ToString();
             configDN = rootdse.Properties["configurationNamingContext"].Value.ToString() ;
             constructedupn = ConverttoUPN(username, domain);
@@ -193,7 +195,7 @@ namespace IISADMPWD
 
         public bool PasswordExpired()
         {
-            return ((PasswordExpiresDate()).AddDays(-5) < DateTime.Now);
+            return ((PasswordExpiresDate()).AddDays(this.notifydays) < DateTime.Now);
         }
 
         public bool PasswordChangeRequired()

@@ -27,6 +27,7 @@ namespace IISADMPWD
         private bool checkpwdlokedout = false;
         private bool checkuseraccountstatus = false;
         private bool checkpassworddoesnotexpire = false;
+        private int notifydays = 0;
         #endregion
 
         #region Constructor/ Dispose
@@ -177,7 +178,7 @@ namespace IISADMPWD
 
                     Logging("Starting Directory Mgmt Class");
 
-                    ActiveDirectoryUser ADclsuser = new ActiveDirectoryUser(userid2,domain);
+                    ActiveDirectoryUser ADclsuser = new ActiveDirectoryUser(userid2, domain, notifydays);
                     Logging("Constructed UPN: " + ADclsuser.constructedupn);  
 
                     if (ADclsuser.AccountExists())
@@ -263,6 +264,7 @@ namespace IISADMPWD
             statusCode = int.Parse(ConfigurationManager.AppSettings["statusCode"]);
             DoLogging = bool.Parse(Tracing);
             LogFile = ConfigurationManager.AppSettings["LogFile"];
+            notifydays = int.Parse(ConfigurationManager.AppSettings["NotifyDays"]);
 
         }
 

@@ -4,3 +4,4 @@ C:\Users\Simon\Downloads\iisadmpwdhttpmodule\HttpModule\HttpModule\bin\Release\I
 C:\Users\Simon\Downloads\iisadmpwdhttpmodule\HttpModule\HttpModule\bin\Release\IISADMPWD.pdb
 C:\Users\Simon\Downloads\iisadmpwdhttpmodule\HttpModule\HttpModule\obj\Release\IISADMPWD.dll
 C:\Users\Simon\Downloads\iisadmpwdhttpmodule\HttpModule\HttpModule\obj\Release\IISADMPWD.pdb
+C:\Users\Simon\Downloads\iisadmpwdhttpmodule\HttpModule\HttpModule\obj\Release\IISADMPWD.csprojResolveAssemblyReference.cache
