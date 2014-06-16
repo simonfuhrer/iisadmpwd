@@ -5,3 +5,9 @@ C:\Users\Simon\Downloads\iisadmpwdhttpmodule\HttpModule\HttpModule\bin\Release\I
 C:\Users\Simon\Downloads\iisadmpwdhttpmodule\HttpModule\HttpModule\obj\Release\IISADMPWD.dll
 C:\Users\Simon\Downloads\iisadmpwdhttpmodule\HttpModule\HttpModule\obj\Release\IISADMPWD.pdb
 C:\Users\Simon\Downloads\iisadmpwdhttpmodule\HttpModule\HttpModule\obj\Release\IISADMPWD.csprojResolveAssemblyReference.cache
+C:\Users\r533\Desktop\iisadmpwd\HttpModule\bin\Release\IISADMPWD.dll
+C:\Users\r533\Desktop\iisadmpwd\HttpModule\bin\Release\IISADMPWD.pdb
+C:\Users\r533\Desktop\iisadmpwd\HttpModule\obj\Release\Interop.ActiveDs.dll
+C:\Users\r533\Desktop\iisadmpwd\HttpModule\obj\Release\IISADMPWD.csproj.ResolveComReference.cache
+C:\Users\r533\Desktop\iisadmpwd\HttpModule\obj\Release\IISADMPWD.dll
+C:\Users\r533\Desktop\iisadmpwd\HttpModule\obj\Release\IISADMPWD.pdb

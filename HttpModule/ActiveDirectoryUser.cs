@@ -118,7 +118,7 @@ namespace IISADMPWD
                 SearchResult result = searcher.FindOne();
                 if (result != null)
                 {
-                    string newpath = result.GetDirectoryEntry().Path.Replace("GC://","LDAP://");
+                    string newpath = result.GetDirectoryEntry().Path.Replace(@"GC://",@"LDAP://");
                     user = new DirectoryEntry(newpath);
                 }
                 else
